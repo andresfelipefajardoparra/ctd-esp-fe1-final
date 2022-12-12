@@ -1,3 +1,5 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { getPersonaje } from '../../redux/action/personajesActions';
 import './paginacion.css';
 
 /**
@@ -8,11 +10,19 @@ import './paginacion.css';
  * 
  * @returns un JSX element 
  */
-const Paginacion = () => {
+const Paginacion = ({next, prev}) => {
+       console.log(next, prev);
+        const dispatch = useDispatch()
+       const handlePrev = ()=>{ dispatch(getPersonaje(prev))
+        
+       }
 
+       const handleNext = ()=> {
+        dispatch(getPersonaje(next))
+       }
     return <div className="paginacion">
-        <button disabled={true} className={"primary"}>Anterior</button>
-        <button disabled={false} className={"primary"}>Siguiente</button>
+        <button disabled={prev === null ? true : false} className={"primary"} onClick={handlePrev}>Anterior</button>
+        <button disabled={next === null ? true : false} className={"primary"} onClick={handleNext} >Siguiente</button>
     </div>
 }
 
