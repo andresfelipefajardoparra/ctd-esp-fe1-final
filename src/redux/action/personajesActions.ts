@@ -1,103 +1,95 @@
+import { ActionCreator, ThunkAction } from "@reduxjs/toolkit"
 import axios from "axios"
-import { any } from "prop-types"
-/**
- *  
- */
-const pedirPersonaje = () => {
+import { AgregarFavoritosAction, BuscarPersonajesAction, BuscarPersonajesErrorAction, BuscarPersonajesSuccessAction, MostrarPersonajesAction, MostrarPersonajesErrorAction, MostrarPersonajesSuccessAction, PersonajesActions, EliminarFavoritosAction, EliminarTodosFavoritosAction } from "../../types/personajes.actions"
+import { Personaje } from "../../types/personajes.types"
+import { IRootState } from "../store"
+
+const pedirPersonaje: ActionCreator<MostrarPersonajesAction> = () => {
     return {
         type: 'MOSTRAR-PERSONAJE'
     }
 }
-/**
- * 
- * @param personajes 
- * @returns 
- */
-const pedirPersonajeSuccess = (personajes: any) => {
+
+const pedirPersonajeSuccess: ActionCreator<MostrarPersonajesSuccessAction> = (personajes: Personaje[]) => {
     return {
-        type: 'MOSTRAR-PERSONAJE-SUCCES',
+        type: 'MOSTRAR-PERSONAJE-SUCCESS',
         payload: personajes
     }
 }
-/**
- * 
- * @param error 
- * @returns 
- */
-const pedirPersonajeError = (error: any) => {
+
+const pedirPersonajeError: ActionCreator<MostrarPersonajesErrorAction> = (error: string) => {
     return {
         type: 'MOSTRAR-PERSONAJE-ERROR',
         payload: error
     }
 }
-
-/**
- * 
- * @returns 
- */
-const pedirPagina = () => {
+const buscarPersonaje: ActionCreator<BuscarPersonajesAction> = (name: string) => {
     return{
-        type: 'PAGINA-PERSONAJE'
+        type: 'BUSCAR-PERSONAJE',
+        payload: name
     }
-    
+
 }
 
-const pedirPaginaSuccess = (paginacion: any) => {
+const buscarPersonajeSuccess: ActionCreator<BuscarPersonajesSuccessAction> = (personajes: Personaje[]) => {
     return {
-        type: 'PAGINA-PRESONAJE-SUCCESS',
-        payload: paginacion
-    }
-}
-
-const pedirPaginaError = (error: any) => {
-    return {
-        type: 'PAGINA-PERSONAJE-ERROR',
-        error: error
+        type: 'BUSCAR-PERSONAJE-SUCCESS',
+        payload: personajes
     }
 }
 
-const buscarPersonaje = (name: string)=> {
+const buscarPersonajeError: ActionCreator<BuscarPersonajesErrorAction> = (error: string) => {
     return {
-        type: 'BUSCAR-PERSONAJE' ,
-        payload : name
+        type: 'BUSCAR-PERSONAJE-ERROR',
+        payload: error
     }
-} 
+}
 
-const buscarPersonajeSuccess = (personaje: any)=> {
+export const agregarFavoritos: ActionCreator<AgregarFavoritosAction> = (favoritos: Personaje)=>{
+    return{
+        type: 'AGREGAR-FAVORITOS',
+        payload: favoritos
+    }
+}
+
+export const eliminarFavoritos: ActionCreator<EliminarFavoritosAction> = (favoritos: Personaje)=> {
+    return{
+        type: 'ELIMINAR-FAVORITOS',
+        payload: favoritos
+    }
+}
+
+export const eliminarTodosFavoritos: ActionCreator<EliminarTodosFavoritosAction> = ()=> {
     return {
-        type: 'BUSCAR-PERSONAJE-SUCCESS' ,
-        payload : personaje
+    type: 'ELIMINAR-TODOS-FAVORITOS'
     }
-} 
+}
 
-const buscarPersonajeError = (error: string)=> {
-    return {
-        type: 'BUSCAR-PERSONAJE-ERROR' ,
-        payload : error
-    }
-} 
+interface GetPersonajeThunkAction extends ThunkAction<void, IRootState, unknown, PersonajesActions>{};
 
-export const getBuscador = (name: string) =>{
-    return  (dispatch: any )  =>{ 
-        let param = '?'
+export const getBuscador = (name: string): GetPersonajeThunkAction =>{
+    return (dispatch) =>{
+        let param = "?"
         if (name){
-            param += `name=${name}`
-        }
-                dispatch(buscarPersonaje())
-            axios.get(`https://rickandmortyapi.com/api/character${param}`)
-            .then(res =>  { 
-                const {info, results} = res.data
-                const {next, prev} = info
-                 dispatch(buscarPersonajeSuccess({results, next, prev}))})
-            .catch (error=> {
-                const {mensage} = error
-            dispatch(buscarPersonajeError(mensage))
-            })
+        param += `name=${name}`
+    }
+            dispatch(buscarPersonaje())
+        axios.get(`https://rickandmortyapi.com/api/character${param}`)
+        .then(res =>  {
+            const {info, results} = res.data
+            const {next, prev} = info
+             dispatch(buscarPersonajeSuccess({results, next, prev}))})
+        .catch (error=> {
+            const {mensage} = error
+        dispatch(buscarPersonajeError(mensage))
+        })
 
 
+    }
+}
 
-export const getPersonaje = (page?: string) =>{
-    return (dispatch: any) =>{
+export const getPersonaje = (page?: string): GetPersonajeThunkAction =>{
+    return (dispatch) =>{
         if(page === undefined)
         page= 'https://rickandmortyapi.com/api/character/';
         dispatch(pedirPersonaje())
@@ -105,7 +97,7 @@ export const getPersonaje = (page?: string) =>{
         .then(res =>  {
                 const {info, results} = res.data
                 const {next, prev} = info
-                 dispatch(pedirPersonajeSuccess({ results, next, prev}))})
+                 dispatch(pedirPersonajeSuccess({results, next, prev}))})
         .catch (error=> {
             const {mensage} = error
         dispatch(pedirPersonajeError(mensage))

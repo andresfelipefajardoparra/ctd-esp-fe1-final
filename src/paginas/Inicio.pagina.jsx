@@ -20,7 +20,7 @@ const PaginaInicio = () => {
         },[dispatch])
         const {personajes} = useSelector(state => state.personajes)
         const {results, next, prev} = personajes
-        console.log(results);
+        
     return <div className="container">
         <div className="actions">
             <h3>Catálogo de Personajes</h3>
@@ -29,7 +29,7 @@ const PaginaInicio = () => {
         <Filtros />
         <Paginacion next={next} prev={prev}/>
         <GrillaPersonajes personajes = {results}/>
-        <Paginacion />
+        <Paginacion next={next} prev={prev}/>
     </div>
 }
 

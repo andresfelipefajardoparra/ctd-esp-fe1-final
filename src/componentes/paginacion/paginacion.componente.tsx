@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getPersonaje } from '../../redux/action/personajesActions';
 import './paginacion.css';
 
@@ -10,7 +10,7 @@ import './paginacion.css';
  * 
  * @returns un JSX element 
  */
-const Paginacion = ({next, prev}) => {
+const Paginacion = ({next, prev}: any) => {
        console.log(next, prev);
         const dispatch = useDispatch()
        const handlePrev = ()=>{ dispatch(getPersonaje(prev))

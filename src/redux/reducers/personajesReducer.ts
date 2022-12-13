@@ -1,74 +1,83 @@
-/**
- * 
- */
+import { Reducer } from "@reduxjs/toolkit";
+import { PersonajesActions } from "../../types/personajes.actions";
+import { Personaje } from "../../types/personajes.types";
 
-interface Reducer {
-    initialState: {
-        loading: boolean;
-        personajes: [];
-        error: null;
-    },
-    actions: {
-        type: 'MOSTRAR-PERSONAJE' | 'MOSTRAR-PERSONAJE-SUCCES' | 'MOSTRAR-PERSONAJE-ERROR' | 'PAGINA-PERSONAJE' | 'PAGINA-PERSONAJE-SUCCESS' | 'PAGINA-PERSONAJE-ERROR' | 'BUSCAR-PERSONAJE'| 'BUSCAR-PERSONAJE-SUCCESS' | 'BUSCAR-PERSONAJE-ERROR'
-        payload?: []
-    }
+export interface PersonajesState {
+        status: 'NOTKNOWN' | 'LOADING' | 'SUCCESS' | 'ERROR';
+        busqueda: string;
+        personajes: Personaje[];
+        favoritos: Personaje[];
+        error: string | null ;
+
 
 }
 
-const initialState: Reducer['initialState'] = {
-    loading: false,
+const initialState: PersonajesState = {
+    status: 'NOTKNOWN',
+    busqueda: "",
     personajes: [],
-    error: null
+    favoritos: [],
+    error: null,
 }
-/**
- * 
- * @param state 
- * @param actions 
- * @returns 
- */
-export const personajesReducer = (state = initialState, actions: Reducer['actions']) => {
+
+const personajesReducer: Reducer<PersonajesState, PersonajesActions> = (state = initialState, actions) => {
     switch (actions.type) {
         case 'MOSTRAR-PERSONAJE':
             return {
                 ...state,
-                loading: true
+                status: 'LOADING'
             }
-        case 'MOSTRAR-PERSONAJE-SUCCES':
+        case 'MOSTRAR-PERSONAJE-SUCCESS':
             return {
                 ...state,
-                loading: false,
+                status: 'SUCCESS',
                 personajes: actions.payload,
-                error: null
+                error: ""
             }
         case 'MOSTRAR-PERSONAJE-ERROR':
             return {
                 ...state,
-                loading: false,
-                personajes: null,
+                status: 'ERROR',
+                personajes: [],
                 error: actions.payload
-                
+
             }
-            case 'PAGINA-PERSONAJE':
+            case 'BUSCAR-PERSONAJE':
                 return {
                     ...state,
-                    loading: true
+                    status: 'LOADING'
                 }
-            case 'PAGINA-PERSONAJE-SUCCES':
+            case 'BUSCAR-PERSONAJE-SUCCESS':
                 return {
                     ...state,
-                    loading: false,
+                    status: 'SUCCESS',
                     personajes: actions.payload,
-                    error: null
+                    error: ""
                 }
-            case 'PAGINA-PERSONAJE-ERROR':
+            case 'BUSCAR-PERSONAJE-ERROR':
                 return {
                     ...state,
-                    loading: false,
-                    personajes: null,
+                    status: 'ERROR',
+                    personajes: [],
                     error: actions.payload
                 }
-        
+            case 'AGREGAR-FAVORITOS':
+                return {
+                    ...state,
+                    favoritos: [actions.payload, ...state.favoritos.filter(per => per.id !== actions.payload.id)]
+                }
+            case 'ELIMINAR-FAVORITOS':
+                return {
+                    ...state,
+                    favoritos: state.favoritos.filter(per => per.id !== actions.payload.id)
+                }
+            case 'ELIMINAR-TODOS-FAVORITOS':
+                return {
+                    ...state,
+                    favoritos: []
+                }
         default:
             return initialState
     }
 }
+export default personajesReducer;

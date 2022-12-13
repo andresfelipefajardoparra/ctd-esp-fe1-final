@@ -1,4 +1,5 @@
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import BotonFavorito from '../botones/boton-favorito.componente';
 import './tarjeta-personaje.css';
 
@@ -11,6 +12,8 @@ import './tarjeta-personaje.css';
  * @returns un JSX element 
  */
 const TarjetaPersonaje = ({personajes}) => {
+    const location = useLocation().pathname
+    const [favorito, setFavorito]= useState(location === "/favoritos" ? true : false);
     
 
     return(<>
@@ -19,7 +22,7 @@ const TarjetaPersonaje = ({personajes}) => {
                 <img src={per.image} alt={per.name} />
                     <div className="tarjeta-personaje-body">
                         <span>{per.name}</span>
-                        <BotonFavorito esFavorito={false} />
+                        <BotonFavorito esFavorito={favorito} personaje={personajes} onClick={setFavorito} />
                     </div>
         </div>
         )}
